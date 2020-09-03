@@ -1,0 +1,90 @@
+diff --git a/mix.exs b/mix.exs
+index 01f44b2..cd90c59 100644
+--- a/mix.exs
++++ b/mix.exs
+@@ -1,25 +1,34 @@
+-defmodule PhoenixElixir.MixProject do
++defmodule PhoenixElixir.MixProject do
+   use Mix.Project
+ 
+   def project do
+     [
+-      app: :phoenix_elixir,
++      app: :phoenix_elixir,
+       version: "0.1.0",
+-      elixir: "~> 1.7",
++      elixir: "~> 1.7",
+       elixirc_paths: elixirc_paths(Mix.env()),
+-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+-      start_permanent: Mix.env() == :prod,
++      compilers: [:platformsh_conf, :phoenix, :gettext ] ++ Mix.compilers(),
++      default_task: "platformsh.config",
++      platformsh_config: [:ecto, :environment],
++      build_embedded:  true,
++      start_permanent: Mix.env() == :prod,
+       aliases: aliases(),
+-      deps: deps()
++      deps: deps(),
+     ]
+   end
+ 
++  def start(_type, _args) do
++    IO.puts "starting"
++    Task.start(fn -> :timer.sleep(1000); IO.puts("done sleeping") end)
++  end
++
++
+   # Configuration for the OTP application.
+   #
+   # Type `mix help compile.app` for more information.
+   def application do
+     [
+-      mod: {PhoenixElixir.Application, []},
++      mod: {PhoenixElixir.Application, []},
+       extra_applications: [:logger, :runtime_tools]
+     ]
+   end
+@@ -33,32 +42,31 @@ defmodule PhoenixElixir.MixProject do
+   # Type `mix help deps` for examples and options.
+   defp deps do
+     [
+-      {:phoenix, "~> 1.5.1"},
+-      {:phoenix_ecto, "~> 4.1"},
+-      {:ecto_sql, "~> 3.4"},
++	  {:platformshconfig, "~> 0.1.2"},
++      {:phoenix, "~> 1.5.1"},
++      
++      {:phoenix_ecto, "~> 4.1"},
++      {:ecto_sql, "~> 3.4"},
+       {:postgrex, ">= 0.0.0"},
+       {:phoenix_html, "~> 2.11"},
+       {:phoenix_live_reload, "~> 1.2", only: :dev},
+-      {:phoenix_live_dashboard, "~> 0.2.0"},
+-      {:telemetry_metrics, "~> 0.4"},
+-      {:telemetry_poller, "~> 0.4"},
+       {:gettext, "~> 0.11"},
+       {:jason, "~> 1.0"},
+-      {:plug_cowboy, "~> 2.0"}
++      {:plug_cowboy, "~> 2.0"},
++
+     ]
+   end
+ 
+   # Aliases are shortcuts or tasks specific to the current project.
+-  # For example, to install project dependencies and perform other setup tasks, run:
++  # For example, to create, migrate and run the seeds file at once:
+   #
+-  #     $ mix setup
++  #     $ mix ecto.setup
+   #
+   # See the documentation for `Mix` for more info on aliases.
+   defp aliases do
+     [
+-      setup: ["deps.get", "ecto.setup", "cmd npm install --prefix assets"],
+-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+-      "ecto.reset": ["ecto.drop", "ecto.setup"],
++      "ecto.setup": ["platformsh.config", "ecto.create --no-compile --quiet", "ecto.migrate --no-compile", "run priv/repo/seeds.exs"],
++      "ecto.reset": ["ecto.drop --no-compile", "ecto.setup"],
+       test: ["ecto.create --quiet", "ecto.migrate", "test"]
+     ]
+   end

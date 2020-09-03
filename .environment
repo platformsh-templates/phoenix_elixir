@@ -1,0 +1,8 @@
+export SECRET_KEY_BASE=$PLATFORM_PROJECT_ENTROPY
+export MIX_ENV='prod'
+DB_SCHEME=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".database[0].scheme")
+DB_USERNAME=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".database[0].username")
+DB_PASSWORD=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".database[0].password")
+DB_HOST=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".database[0].host")
+DB_PATH=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".database[0].path")
+export DATABASE_URL=$(echo \"$DB_SCHEME://$DB_USERNAME:$DB_PASSWORD@$DB_HOST/$DB_PATH\")
