@@ -1,0 +1,21 @@
+name: app
+
+type: elixir:1.14
+
+variables:
+    env:
+        MIX_ENV: 'prod'
+
+hooks:
+    build: |
+        mix local.hex --force
+        mix local.rebar --force
+        mix do deps.get --only prod, deps.compile, compile
+
+web:
+    commands:
+        start: mix phx.server
+    locations:
+        /:
+            allow: false
+            passthru: true
