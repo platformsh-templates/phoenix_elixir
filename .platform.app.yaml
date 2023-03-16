@@ -11,6 +11,9 @@ hooks:
         mix local.hex --force
         mix local.rebar --force
         mix do deps.get --only prod, deps.compile, compile
+        mix assets.deploy
+        mix phx.digest
+
     deploy: |
         mix ecto.create
         mix ecto.migrate
