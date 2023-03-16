@@ -25,6 +25,15 @@ web:
         /:
             allow: false
             passthru: true
+            
+        # let nginx serve statics
+        /assets/:
+            rules:
+                # Allow common image files only.
+                '\.(jpe?g|png|gif|svgz?|css|js|map|ico|bmp|eot|woff2?|otf|ttf)$':
+                    allow: true
+                    passthru: false
+        
 
 relationships:
     postgres: "db:postgresql"
