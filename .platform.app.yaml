@@ -1,0 +1,40 @@
+name: app
+
+type: elixir:1.14
+
+variables:
+    env:
+        MIX_ENV: 'prod'
+
+hooks:
+    build: |
+        mix local.hex --force
+        mix local.rebar --force
+        mix do deps.get --only prod, deps.compile, compile
+        mix assets.deploy
+        mix phx.digest
+
+    deploy: |
+        mix ecto.create
+        mix ecto.migrate
+
+web:
+    commands:
+        start: mix phx.server
+    locations:
+        /:
+            allow: false
+            passthru: true
+            
+        # let nginx serve statics
+        /assets/:
+            root: 'priv/static/assets'
+            rules:
+                # Allow common image files only.
+                '\.(jpe?g|png|gif|svgz?|css|js|map|ico|bmp|eot|woff2?|otf|ttf)$':
+                    allow: true
+                    passthru: false
+        
+
+relationships:
+    postgres: "db:postgresql"
