@@ -28,6 +28,7 @@ web:
             
         # let nginx serve statics
         /assets/:
+            root: 'priv/static/assets'
             rules:
                 # Allow common image files only.
                 '\.(jpe?g|png|gif|svgz?|css|js|map|ico|bmp|eot|woff2?|otf|ttf)$':
